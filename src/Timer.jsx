@@ -1,49 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const Timer = ({
+  time,
+  setTime,
   initialTime,
   onTimeUp,
   onVisibilityChange,
-  visibilityInterval,
   resetKey,
-  isLevelOver,
+  isGameOver,
+  level,
 }) => {
-  const [timeRemaining, setTimeRemaining] = useState(initialTime);
-  const [mazeVisible, setMazeVisible] = useState(true);
+  const [isActive, setIsActive] = useState(true);
+  const countdown = useRef(null);
 
-  useEffect(() => {
-    setTimeRemaining(initialTime);
-  }, [resetKey, initialTime]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeRemaining((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timer);
-          onTimeUp();
-          return 0;
-        }
-        return prevTime - 1;
-      });
+  const startTimer = () => {
+    setIsActive(true);
+    countdown.current = setInterval(() => {
+      setTime((prevTime) => prevTime - 1);
     }, 1000);
+  };
 
-    return () => clearInterval(timer);
-  }, [resetKey, onTimeUp]);
+  const stopTimer = () => {
+    setIsActive(false);
+    clearInterval(countdown.current);
+  };
 
   useEffect(() => {
-    const visibilityTimer = setInterval(() => {
-      setMazeVisible((prevVisible) => {
-        onVisibilityChange(!prevVisible);
-        return !prevVisible;
-      });
-    }, visibilityInterval * 1000);
+    if (isGameOver) {
+      stopTimer();
+    } else {
+      startTimer();
+    }
 
-    return () => clearInterval(visibilityTimer);
-  }, [resetKey, visibilityInterval, onVisibilityChange]);
+    return () => {
+      stopTimer();
+    };
+  }, [isGameOver]);
+
+  useEffect(() => {
+    if (time === 0) {
+      stopTimer();
+      onTimeUp();
+    }
+  }, [time, onTimeUp]);
+
+  useEffect(() => {
+    setTime(initialTime);
+  }, [initialTime, resetKey]);
+
+  useEffect(() => {
+    if (level === 1) {
+      onVisibilityChange(true);
+      setTimeout(() => {
+        onVisibilityChange(false);
+      }, 1000);
+    }
+  }, [level, onVisibilityChange]);
 
   return (
     <div>
-      <h2>Time Remaining: {timeRemaining}s</h2>
+      <h2>Time: {time}</h2>
     </div>
   );
 };

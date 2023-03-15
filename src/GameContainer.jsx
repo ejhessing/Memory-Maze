@@ -20,6 +20,8 @@ const GameContainer = () => {
   const [winModalVisible, setWinModalVisible] = useState(false);
   const [loseModalVisible, setLoseModalVisible] = useState(false);
   const initialMaze = generateMaze(sizeOfMaze, sizeOfMaze);
+  const [lives, setLives] = useState(3);
+
   const [score, setScore] = useState(0);
   const [steps, setSteps] = useState(0);
 
@@ -42,6 +44,13 @@ const GameContainer = () => {
   const handleVisibilityChange = useCallback((visible) => {
     setMazeVisible(visible);
   }, []);
+
+  useEffect(() => {
+    handleVisibilityChange(true);
+    setTimeout(() => {
+      handleVisibilityChange(false);
+    }, 2000);
+  }, [level, handleVisibilityChange]);
 
   const movePlayer = useCallback(
     (dx, dy) => {
@@ -109,6 +118,16 @@ const GameContainer = () => {
     setLoseModalVisible(false);
   };
 
+  const revealMaze = () => {
+    if (lives > 0) {
+      setLives(lives - 1);
+      handleVisibilityChange(true);
+      setTimeout(() => {
+        handleVisibilityChange(false);
+      }, 2000);
+    }
+  };
+
   const handleWinCloseModal = () => {
     setLevel(level + 1);
     setPlayerPosition({ x: 1, y: 1 });
@@ -145,7 +164,6 @@ const GameContainer = () => {
         initialTime={timeAllowed}
         onTimeUp={handleTimeUp}
         onVisibilityChange={handleVisibilityChange}
-        visibilityInterval={visibilityHelper}
         resetKey={level}
         isGameOver={winModalVisible || loseModalVisible}
         level={level}
@@ -176,6 +194,10 @@ const GameContainer = () => {
           </label>
           <button type="submit">Update Settings</button>
         </form> */}
+      </div>
+      <div>
+        <button onClick={revealMaze}>Reveal Maze</button>
+        <h2>Lives: {lives}</h2>
       </div>
 
       {winModalVisible && (
