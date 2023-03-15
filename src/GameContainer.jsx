@@ -33,7 +33,7 @@ const GameContainer = () => {
   const handleTimeUp = useCallback(() => {
     setLoseModalVisible(true);
     setPlayerPosition({ x: 1, y: 1 });
-
+    console.log("oh you lost :|" + level);
     if (level > 1) {
       setLevel(level - 1);
     }
