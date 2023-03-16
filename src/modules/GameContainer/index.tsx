@@ -78,10 +78,14 @@ const GameContainer: React.FC = () => {
 
         // Check if the player reached the end point
         if (newX === maze[0].length - 2 && newY === maze.length - 2) {
+          const minScorePerLevel = 50;
           const maxSteps = ((maze.length - 1) * (maze[0].length - 1)) / 2;
-          const stepScore = ((maxSteps - steps) / maxSteps) * 100;
-          const timeScore = (time / timeAllowed) * 100;
-          const finalScore = Math.round((stepScore + timeScore) / 2);
+          const stepBonus = Math.max(0, ((maxSteps - steps) / maxSteps) * 50);
+          const timeBonus = Math.max(0, (time / timeAllowed) * 50);
+          const finalScore = Math.round(
+            minScorePerLevel + stepBonus + timeBonus
+          );
+
           setScore((prevScore) => prevScore + finalScore);
           successAudio.play();
           setWinModalVisible(true);
