@@ -1,7 +1,12 @@
 import React from "react";
 import { Rect } from "react-konva";
 
-const Maze = ({ maze, cellSize }) => {
+interface MazeProps {
+  maze: number[][];
+  cellSize: number;
+}
+
+const Maze: React.FC<MazeProps> = ({ maze, cellSize }) => {
   const exitX = maze[0].length - 2;
   const exitY = maze.length - 2;
 
