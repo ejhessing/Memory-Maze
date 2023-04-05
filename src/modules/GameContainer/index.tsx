@@ -49,7 +49,12 @@ const GameContainer: React.FC = () => {
     if (level > 1) {
       setLevel(level - 1);
     }
-    setMaze(generateMaze(sizeOfMaze + level, sizeOfMaze + level));
+
+    // Determine the new width and height of the maze
+    const newWidth = sizeOfMaze + (level % 2 === 0 ? 1 : 0);
+    const newHeight = sizeOfMaze + (level % 2 === 1 ? 1 : 0);
+
+    setMaze(generateMaze(newWidth, newHeight));
     setTime(timeAllowed);
   }, [level]);
 
